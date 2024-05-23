@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Jeux</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gestion de Jeux</h1>
+        <form id="addGameForm">
+            <input type="text" id="title" name="title" placeholder="Titre du jeu" required>
+            <input type="text" id="category" name="category" placeholder="Catégorie" required>
+            <button type="submit">Ajouter le jeu</button>
+        </form>
+        <div class="games-list" id="gamesList"></div>
+    </div>
+
+    <script>
+        document.getElementById('addGameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+
+            fetch('/games', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ titre: title, categorie: category })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                fetchGames();
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function fetchGames() {
+            fetch('/games')
+                .then(response => response.json())
+                .then(data => {
+                    const gamesList = document.getElementById('gamesList');
+                    gamesList.innerHTML = '';
+                    data.forEach(game => {
+                        const gameDiv = document.createElement('div');
+                        gameDiv.className = 'game';
+                        gameDiv.innerHTML = `<strong>${game.titre}</strong> - ${game.categorie} 
+                                             <div>
+                                                 <button onclick="deleteGame(${game.id})">Supprimer</button>
+                                                 <button class="update" onclick="updateGame(${game.id})">Modifier</button>
+                                             </div>`;
+                        gamesList.appendChild(gameDiv);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deleteGame(id) {
+            fetch(`/games/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                fetchGames();
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function updateGame(id) {
+            const title = prompt('Nouveau titre:');
+            const category = prompt('Nouvelle catégorie:');
+            if (title && category) {
+                fetch(`/games/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ titre: title, categorie: category })
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    fetchGames();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        // Initial fetch to display games
+        fetchGames();
+    </script>
+</body>
+</html>
