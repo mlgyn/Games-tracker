@@ -3,16 +3,27 @@
 
 require_once 'db.php';
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $publisher = $_POST['publisher'];
     $rating = $_POST['rating'];
 
+    var_dump($_POST);
+
     $stmt = $db->prepare('INSERT INTO games (name, publisher, rating, rating_date) VALUES (?, ?, ?, NOW())');
+    var_dump($stmt);
+    var_dump($stmt->errorInfo());
     $stmt->execute([$name, $publisher, $rating]);
 
-    header('Location: index.php');
-    exit;
+    if ($stmt->rowCount() > 0) {
+        header('Location: index.php');
+        exit;
+    } else {
+        echo "Erreur lors de l'insertion des données";
+    }
 }
 ?>
 
@@ -20,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/css/style.css">
     <title>Créer un jeu vidéo</title>
 </head>
 <body>

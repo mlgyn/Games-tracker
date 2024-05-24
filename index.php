@@ -11,6 +11,7 @@ $games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/css/style.css">
     <title>Liste des jeux vidéos</title>
 </head>
 <body>
