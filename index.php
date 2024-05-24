@@ -1,24 +1,28 @@
 <?php
-// Établir une connexion à la base de données MySQL
-$serveur = "localhost:3306";
-$utilisateur = "test";
-$motDePasse = "Motdepasse_0108";
-$baseDeDonnees = "game";
+// index.php
 
-// $connexion = new mysqli($serveur, $utilisateur, $motDePasse, $baseDeDonnees);
-try {
-    $mysqlClient = new PDO(
-	"mysql:host=$serveur;dbname=$baseDeDonnees;charset=utf8",
-	$utilisateur,
-	$motDePasse
-);  
-} catch(\Exception  $e) {
-    echo($e->getMessage());
-    die("nooooooo");
-}
-// Vérifier la connexion
-$sth = $mysqlClient->prepare("SELECT * from games ; ");
-$results = $sth->execute();
-print_r($sth->fetchAll());
+require_once 'db.php';
 
+$stmt = $db->query('SELECT id, name FROM games');
+$games = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des jeux vidéos</title>
+</head>
+<body>
+    <h1>Liste des jeux vidéos</h1>
+    <ul>
+        <?php foreach ($games as $game): ?>
+            <li>
+                <a href="show.php?id=<?= $game['id'] ?>">
+                    <?= $game['name'] ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</body>
+</html>
