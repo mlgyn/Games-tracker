@@ -58,4 +58,4 @@ Pour installer et exécuter l'application sur votre propre serveur, suivez ces �
 
 ## Contributeurs
 
-- [Votre Nom] : Développeur principal
+- [Mathis & Prince] : Développeur principal
